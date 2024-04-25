@@ -68,8 +68,14 @@ public:
     unsigned char* EncryptECB(const unsigned char in[], unsigned int inLen,
         const unsigned char key[]);
 
+    unsigned char* EncryptECB(const unsigned char in[], unsigned int inLen,
+        const unsigned char key[], unsigned char out[]);
+
     unsigned char* DecryptECB(const unsigned char in[], unsigned int inLen,
         const unsigned char key[]);
+
+    unsigned char* DecryptECB(const unsigned char in[], unsigned int inLen,
+        const unsigned char key[], unsigned char out[]);
 
     unsigned char* EncryptCBC(const unsigned char in[], unsigned int inLen,
         const unsigned char key[], const unsigned char* iv);

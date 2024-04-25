@@ -1,3 +1,4 @@
+#pragma once
 #include <stdlib.h>
 #include <cstdlib>
 #include <algorithm>
@@ -5,7 +6,7 @@
 #define BYTE_BLOCK_SIZE 1
 constexpr size_t n_symbols = (1 << (BYTE_BLOCK_SIZE * 8));
 
-inline double GetEntropy(unsigned char* buffer, size_t len) {
+inline double GetEntropy(const unsigned char* buffer, size_t len) {
 	int freqs[n_symbols] = { 0 };
 	double probabilities[n_symbols] = { 0 };
 	//std::fill(freqs, freqs + 0xff, 0);
