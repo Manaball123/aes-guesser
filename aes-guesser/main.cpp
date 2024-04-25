@@ -39,9 +39,8 @@ int main(int argc, char** argv) {
 	if (argc == 1)
 	{
 		std::cout << "how 2 use: \n";
-		std::cout << "./aes-guesser <path 2 encrypted shit> <wildcarded key> <entropy threshold(optional, default = 6.00)>\n";
-		std::cout << "./aes-guesser demo\n";
-		main_demo();
+		std::cout << "attempt at decryption: ./aes-guesser <path 2 encrypted shit> <wildcarded key> <entropy threshold(optional, default = 6.00)>\n";
+		std::cout << "show demo: ./aes-guesser demo\n";
 		return 0;
 	}
 	if (argc == 2) {
