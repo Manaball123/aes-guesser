@@ -8,25 +8,31 @@ void AESGuesser::InitKey(const std::string& wildcarded_key) {
 	
 	
 	key.reserve(key_len);
-	
-	for (unsigned int i = 0; i < key_len; i++) {
-		std::string byteString = wildcarded_key.substr(i * 2, 2);
-		if (byteString == std::string("??")) {
-			byteString = "00";
+	std::string wildcarded_key_copy = wildcarded_key;
+	//step 1: substitute all chars with 0 and mark poses
+	for (unsigned int i = 0; i < key_len * 2; i++) {
+		if (wildcarded_key_copy[i] == '?') {
+			wildcarded_key_copy[i] = '0';
 			wildcard_poses.push_back(i);
 		}
+	}
+	//step2: convert to actual key
+	for (unsigned int i = 0; i < key_len; i++) {
+		std::string byteString = wildcarded_key_copy.substr(i * 2, 2);
 		char byte = (char)strtol(byteString.c_str(), NULL, 16);
 		key.push_back(byte);
-
 	}
 }
 
-void AESGuesser::ModifyKey(std::vector<unsigned char>& key, int iter) {
+void AESGuesser::ModifyKey(std::vector<unsigned char>& key, int iter) const {
 	unsigned char cur = iter & 0xff;
 	int idx = 0;
+	//go in 1 char(4 byte) increments until iter = 0
+
 	while (cur != 0 && idx < wildcard_poses.size()) {
-		cur = (iter >> (idx * 8)) & 0xff;
-		key[wildcard_poses[idx]] = cur;
+		cur = (iter >> (idx * 4)) & 0x0f;
+		size_t pos_idx = wildcard_poses[idx];
+		key[pos_idx / 2] = (cur << (pos_idx % 2 == 0 ? 4 : 0)) | this->key[pos_idx / 2];
 		idx++;
 	}
 
@@ -49,18 +55,18 @@ AESGuesser::AESGuesser(const std::string& wildcarded_key_unstripped, unsigned ch
 		throw std::exception("bad key size :(");
 
 	InitKey(wildcarded_key);
-	max_iterations = 1 << (wildcard_poses.size() * 8);
+	max_iterations = 1 << (wildcard_poses.size() * 4);
 }
 
-bool AESGuesser::IsKeyPossiblyValid(const std::vector<unsigned char>& key, double entropy_threshold) {
+bool AESGuesser::IsKeyPossiblyValid(const std::vector<unsigned char>& key, double entropy_threshold) const {
 
-	auto d = aes.DecryptECB(encrypted_buf, buf_len, key.data(), reserved_dec_buf);
+	auto d = const_cast<AES&>(aes).DecryptECB(encrypted_buf, buf_len, key.data(), reserved_dec_buf);
 	if (GetEntropy(d, buf_len) < entropy_threshold)
 		return true;
 	return false;
 }
 
-std::vector<std::vector<unsigned char>> AESGuesser::BruteforceKey(double entropy_threshold, int max_iters) {
+std::vector<std::vector<unsigned char>> AESGuesser::BruteforceKey(double entropy_threshold, int max_iters) const {
 
 	if (max_iters == -1 || max_iters > max_iterations)
 		max_iters = max_iterations;

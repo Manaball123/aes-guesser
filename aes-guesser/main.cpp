@@ -26,13 +26,14 @@ int main_demo() {
 	unsigned char key[] = "ImNotGayIJustHaveAPenisFetish:33";
 	AES aes(AESKeyLength::AES_256);
 	//						      49 6d 4e 6f 74 47 61 79 49 4a 75 73 74 48 61 76 65 41 50 65 6e 69 73 46 65 74 69 73 68 3a 33 33
-	std::string wildcarded_key = "49 6d 4e 6f 74 47 61 79 49 4a 75 73 74 48 61 76 65 41 50 65 6e 69 73 46 65 ?? 69 73 68 3a 33 33";
+	std::string wildcarded_key = "49 6d 4? 6f 74 47 61 79 49 4? 75 73 74 48 61 76 65 41 ?0 65 6e 6? 73 46 65 ?4 69 73 68 3a 33 33";
 	auto c = aes.EncryptECB(buf, 256, key);
 	AESGuesser guesser(wildcarded_key, c, 256);
 	auto res = guesser.BruteforceKey();
 	for (auto& r : res) {
-		std::cout << "Possible key: " << hexStr(r.data(), 16);
+		std::cout << "Possible key: " << hexStr(r.data(), 32);
 	}
+	return 0;
 }
 
 int main(int argc, char** argv) {

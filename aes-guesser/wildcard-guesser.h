@@ -19,15 +19,15 @@ class AESGuesser {
 
 	void InitKey(const std::string& wildcarded_key);
 
-	void ModifyKey(std::vector<unsigned char>& key, int iter);
+	void ModifyKey(std::vector<unsigned char>& key, int iter) const;
 public:
 	
 	//Note that the string is not the key itself, but rather the byte representation of it(e.g. 00aacc?? would have a size of 4 bytes)
 	AESGuesser(const std::string& wildcarded_key, unsigned char* buf, size_t buf_len);
 
-	bool IsKeyPossiblyValid(const std::vector<unsigned char>& key, double entropy_threshold);
+	bool IsKeyPossiblyValid(const std::vector<unsigned char>& key, double entropy_threshold) const;
 
-	std::vector<std::vector<unsigned char>> BruteforceKey(double entropy_threshold = 6.0, int max_iters = -1);
+	std::vector<std::vector<unsigned char>> BruteforceKey(double entropy_threshold = 6.0, int max_iters = -1) const;
 	
 
 };
